@@ -12,6 +12,8 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.2
   notifications: ^2.0.1
+  flutter_local_notifications: ^5.0.0
+
 
 dev_dependencies:
   flutter_test:

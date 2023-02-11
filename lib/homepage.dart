@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:notifications/notifications.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'local_notice_service.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -12,7 +14,6 @@ class _HomePageState extends State<HomePage> {
   Notifications? _notifications;
   StreamSubscription<NotificationEvent>? _subscription;
   bool started = false;
-
   @override
   void initState() {
     super.initState();
@@ -22,10 +23,27 @@ class _HomePageState extends State<HomePage> {
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
     startListening();
+    await NotificationService().init();
+  }
+
+  void showNotification(title, body) async {
+    await NotificationService().flutterLocalNotificationsPlugin.show(
+        0,
+        title ? title : 'Cringe Me Away',
+        body ? body : 'You have been cringed away',
+        NotificationDetails(
+            android: AndroidNotificationDetails('12345', 'ch1', 'Test Channel',
+                importance: Importance.max, priority: Priority.high),
+            iOS: IOSNotificationDetails()),
+        payload: 'item x');
   }
 
   void onData(NotificationEvent event) {
+    //TODO: Implement Logic
     print(event.toString());
+    if (event.packageName.toString() == "com.whatsapp") {
+      showNotification(event.title, event.message);
+    }
   }
 
   void startListening() {
@@ -104,6 +122,32 @@ class _HomePageState extends State<HomePage> {
                     child: Center(
                       child: Text(
                         started ? 'STOP CRINGING' : 'START CRINGING',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 15.0),
+              GestureDetector(
+                onTap: () {
+                  print("hello");
+                  // showNotification();
+                },
+                child: Container(
+                  height: 40.0,
+                  width: 200.0,
+                  child: Material(
+                    borderRadius: BorderRadius.circular(20.0),
+                    shadowColor: Colors.greenAccent,
+                    color: Theme.of(context).primaryColor,
+                    elevation: 7.0,
+                    child: Center(
+                      child: Text(
+                        "Test",
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
